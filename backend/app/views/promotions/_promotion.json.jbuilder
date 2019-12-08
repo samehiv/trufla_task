@@ -1,0 +1,1 @@
+json.extract! promotion, :id, :code, :discount, :active

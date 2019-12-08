@@ -1,0 +1,40 @@
+version: '3.7'
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+  backend:
+    build:
+      context: ./backend
+    command:
+      - bash
+      - -c
+      - |
+        /wait-for-it/wait-for-it.sh db:5432 -t 0 --strict -- rails db:create
+        /wait-for-it/wait-for-it.sh db:5432 -t 0 --strict -- rails db:migrate
+        /wait-for-it/wait-for-it.sh db:5432 -t 0 --strict -- rails db:seed
+        rm -f tmp/pids/server.pid
+        bundle exec rails s -p 4000 -b '0.0.0.0'
+    volumes:
+      - ./backend:/app
+    ports: 
+      - "4000:4000"
+    depends_on:
+      - db
+  fontend:
+    build:
+      context: ./frontend
+    command: 
+      - bash
+      - -c
+      - |
+        /wait-for-it/wait-for-it.sh backend:4000 -t 0 --strict -- npm start
+    ports:
+      - "3000:3000"
+    depends_on: 
+      - backend
+    
+    
+    
+      
