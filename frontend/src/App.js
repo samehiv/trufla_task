@@ -15,7 +15,6 @@ import CreatePromotion from './containers/CreatePromotion';
 import AddPromotionToProduct from './containers/AddPromotionToProduct'
 
 function App() {
-  console.log()
   return (
     <Router>
 
